@@ -1,29 +1,55 @@
 import React from "react"
 import { useImmer } from "use-immer"
 
-type InputProps = {
-  handler: React.Dispatch<React.SetStateAction<object>>
-  data: object
+interface DataField {
+  [key: string]: string
 }
 
-const Input: React.FC<InputProps> = ({data, handler}) => {
-  return <form></form>
+interface DataForm {
+  [key: string]: DataField
 }
 
 const ResumeBuilder = () => {
-  const [data, setDate] = useImmer({
+  const [data, setData] = useImmer<DataForm>({
     "personal details": {
       "first name": "",
       "last name": "",
       "job title": "",
       "email address": "",
-      "phone number": 0,
+      "phone number": "",
       "country": "",
       "city": ""
     }
   })
 
-  return <></>
+  return (
+    <form>
+      {Object.entries(data).map(([section, fields], index) => {
+        return (
+          <div key={index}>
+            <h2>{section}</h2>
+            {Object.entries(fields).map(([key, value], index) => {
+              return (
+                <div key={index}>
+                  <label htmlFor={key}>{key}</label>
+                  <input 
+                  type="text" 
+                  id={key} 
+                  value={value} 
+                  onChange={(e) => 
+                    setData(draft => {
+                      draft[section][key] = e.target.value
+                    })
+                    } />
+                </div>
+              )
+            })}
+          </div>
+        )
+      })}
+      <button type="submit">Submit</button>
+    </form>
+  )
 }
 
 export default ResumeBuilder
