@@ -7,7 +7,7 @@ interface DataField {
 }
 
 interface DataForm {
-  [key: string]: DataField
+  [key: string]: DataField | DataField[]
 }
 
 const ResumeBuilder = () => {
@@ -20,20 +20,27 @@ const ResumeBuilder = () => {
       "phone number": "",
       "country": "",
       "city": ""
-    }
+    },
+    "education": []
   })
 
   const updateField = (newData: string, section: string, field: string) => {
-    setData(draft => {
-      draft[section][field] = newData
+    setData(draft => {   
+      if(Array.isArray(data[section])) {
+        
+      } else {
+        (draft[section] as DataField)[field] = newData
+      }
     })
   }
 
+  const formSections = Object.entries(data).map(([section, fields], index) => {
+    return <FormSection sectionName={section} fields={fields} updater={updateField} key={index} />
+  })
+
   return (
     <form>
-      {Object.entries(data).map(([section, fields], index) => {
-        return <FormSection sectionName={section} fields={fields} updater={updateField} />
-      })}
+      {formSections}
       <button type="submit">Submit</button>
     </form>
   )

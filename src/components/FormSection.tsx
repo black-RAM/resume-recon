@@ -16,25 +16,37 @@ const FormInput: React.FC<formInputProps> = ({field, value, updater}) => {
   )
 }
 
+interface FormInputs {
+  [key: string]: string
+}
+
 type formSectionProps = {
   sectionName: string,
-  fields: {[key: string]: string},
+  fields: FormInputs | FormInputs[],
   updater: (newData: string, section: string, field: string) => void
 }
 
 const FormSection: React.FC<formSectionProps> = ({sectionName, fields, updater}) => {
+  let inputs: React.JSX.Element | React.JSX.Element[]
+
+  if(Array.isArray(fields)) {
+    inputs = <button type="button">Add new {sectionName}</button>
+  } else {
+    inputs = Object.entries(fields).map(([field, value], index) => {
+      return <FormInput 
+        key={index}
+        field={field} 
+        value={value} 
+        updater={(e: React.ChangeEvent<HTMLInputElement>) => {
+          updater(e.target.value, sectionName, field)
+        }} />
+    })
+  }
+
   return (
     <div>
       <h2>{sectionName}</h2>
-      {Object.entries(fields).map(([field, value], index) => {
-        return <FormInput 
-          key={index * 2}
-          field={field} 
-          value={value} 
-          updater={(e: React.ChangeEvent<HTMLInputElement>) => {
-            updater(e.target.value, sectionName, field)
-          }} />
-      })}
+      {inputs}
     </div>
   )
 }
