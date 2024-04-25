@@ -1,5 +1,6 @@
 import React from "react"
 import { useImmer } from "use-immer"
+import FormSection from "./components/FormSection"
 
 interface DataField {
   [key: string]: string
@@ -22,30 +23,16 @@ const ResumeBuilder = () => {
     }
   })
 
+  const updateField = (newData: string, section: string, field: string) => {
+    setData(draft => {
+      draft[section][field] = newData
+    })
+  }
+
   return (
     <form>
       {Object.entries(data).map(([section, fields], index) => {
-        return (
-          <div key={index}>
-            <h2>{section}</h2>
-            {Object.entries(fields).map(([key, value], index) => {
-              return (
-                <div key={index}>
-                  <label htmlFor={key}>{key}</label>
-                  <input 
-                  type="text" 
-                  id={key} 
-                  value={value} 
-                  onChange={(e) => 
-                    setData(draft => {
-                      draft[section][key] = e.target.value
-                    })
-                    } />
-                </div>
-              )
-            })}
-          </div>
-        )
+        return <FormSection sectionName={section} fields={fields} updater={updateField} />
       })}
       <button type="submit">Submit</button>
     </form>
