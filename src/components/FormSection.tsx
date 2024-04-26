@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 
 type formInputProps = {
   field: string, 
@@ -16,32 +16,58 @@ const FormInput: React.FC<formInputProps> = ({field, value, updater}) => {
   )
 }
 
-interface FormInputs {
-  [key: string]: string
-}
-
 type formSectionProps = {
   sectionName: string,
-  fields: FormInputs | FormInputs[],
+  sectionData: {[key: string]: string | ({[key: string]: string} | string)[]},
   updater: (newData: string, section: string, field: string) => void
 }
 
-const FormSection: React.FC<formSectionProps> = ({sectionName, fields, updater}) => {
-  let inputs: React.JSX.Element | React.JSX.Element[]
+const FormSection: React.FC<formSectionProps> = ({sectionName, sectionData, updater}) => {
+  let [inputs, setInputs] = useState<React.JSX.Element[]>([])
 
-  if(Array.isArray(fields)) {
-    inputs = <button type="button">Add new {sectionName}</button>
-  } else {
-    inputs = Object.entries(fields).map(([field, value], index) => {
-      return <FormInput 
+  const inputsFromObject = (obj: object) => {
+    const objInputs = Object.entries(obj).map(([key, value], index) => 
+      <FormInput 
         key={index}
-        field={field} 
-        value={value} 
+        field={key} 
+        value={value as string} 
         updater={(e: React.ChangeEvent<HTMLInputElement>) => {
-          updater(e.target.value, sectionName, field)
+          updater(e.target.value, sectionName, key)
         }} />
-    })
+    )
+
+    setInputs(others => [...others, <div>{objInputs}</div>]) 
   }
+
+  const inputsFromArray = (arr: any[]) => {
+    const arrInputs = arr.map((field, index) => 
+      <FormInput 
+        key={index} 
+        field={field} 
+        value="" 
+        updater={() => {}} 
+        />)
+
+    setInputs(others => [...others, <div>{arrInputs}</div>])
+  }
+
+  const generateInputs = () => {
+    const fieldsArray = sectionData["fields"] 
+
+    if(Array.isArray(fieldsArray)) {
+      const creator = () => inputsFromArray(fieldsArray)
+      const addButton = <button type="button" onClick={creator}>Add new {sectionName}</button>
+      setInputs(others => [...others, addButton])
+    } else {
+      inputsFromObject(sectionData)
+    }
+
+    return () => {
+      setInputs(_ => [])
+    }
+  }
+
+  useEffect(generateInputs, [sectionName, sectionData, updater])
 
   return (
     <div>

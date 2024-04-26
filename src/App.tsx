@@ -2,12 +2,10 @@ import React from "react"
 import { useImmer } from "use-immer"
 import FormSection from "./components/FormSection"
 
-interface DataField {
-  [key: string]: string
-}
-
 interface DataForm {
-  [key: string]: DataField | DataField[]
+  [key: string]: {
+    [key: string]: string | ({[key: string]: string} | string)[]
+  }
 }
 
 const ResumeBuilder = () => {
@@ -21,21 +19,24 @@ const ResumeBuilder = () => {
       "country": "",
       "city": ""
     },
-    "education": []
+    "education": {
+      "fields": ["School", "Degree", "Start Date", "End Date", "Location", "Description"],
+      "data": []
+    }
   })
 
   const updateField = (newData: string, section: string, field: string) => {
     setData(draft => {   
-      if(Array.isArray(data[section])) {
+      if(Array.isArray(data[section]["fields"])) {
         
       } else {
-        (draft[section] as DataField)[field] = newData
+        draft[section][field] = newData
       }
     })
   }
 
-  const formSections = Object.entries(data).map(([section, fields], index) => {
-    return <FormSection sectionName={section} fields={fields} updater={updateField} key={index} />
+  const formSections = Object.entries(data).map(([section, data], index) => {
+    return <FormSection sectionName={section} sectionData={data} updater={updateField} key={index} />
   })
 
   return (
