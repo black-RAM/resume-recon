@@ -1,69 +1,75 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState, } from "react"
+import FormInput from "./FormInput"
 
-type formInputProps = {
-  field: string, 
-  value: string, 
-  updater: React.ChangeEventHandler<HTMLInputElement>
+interface Data {
+  [key: string]: string
 }
 
-const FormInput: React.FC<formInputProps> = ({field, value, updater}) => {
-  return (
-    <div>
-      <label>
-        {field}: <input type="text" value={value} onChange={updater} />
-      </label>
-    </div>
-  )
+interface NestedData {
+  "fields": string[], 
+  "data": {
+    [key: string]: Data
+  }
 }
 
 type formSectionProps = {
   sectionName: string,
-  sectionData: {[key: string]: string | ({[key: string]: string} | string)[]},
-  updater: (newData: string, section: string, field: string) => void
+  sectionData: Data | NestedData,
+  updater: (newData: string, section: string, field: string, id?: string) => void,
 }
 
 const FormSection: React.FC<formSectionProps> = ({sectionName, sectionData, updater}) => {
-  let [inputs, setInputs] = useState<React.JSX.Element[]>([])
+  const [inputs, setInputs] = useState<React.JSX.Element[]>([])
 
-  const inputsFromObject = (obj: object) => {
-    const objInputs = Object.entries(obj).map(([key, value], index) => 
-      <FormInput 
-        key={index}
-        field={key} 
-        value={value as string} 
-        updater={(e: React.ChangeEvent<HTMLInputElement>) => {
-          updater(e.target.value, sectionName, key)
-        }} />
-    )
+  const inputsFromObject = () => {
+    const entries = Object.entries(sectionData as Data)
+    const objInputs = entries.map(([key, value], index) => {
+      return (
+        <FormInput 
+          key={index}
+          field={key} 
+          value={value} 
+          updater={(e: React.ChangeEvent<HTMLInputElement>) => {
+            updater(e.target.value, sectionName, key)
+          }} />
+      )
+    })
 
     setInputs(others => [...others, <div>{objInputs}</div>]) 
   }
 
-  const inputsFromArray = (arr: any[]) => {
-    const arrInputs = arr.map((field, index) => 
-      <FormInput 
-        key={index} 
-        field={field} 
-        value="" 
-        updater={() => {}} 
-        />)
+  const inputsFromArray = () => {
+    const id = crypto.randomUUID()
+    const section = sectionData as NestedData
+    const dataObject = section["data"][id] || {}
+    const dataFields = section["fields"]
+    
+    const arrInputs = dataFields.map((field, index) => {
+      return (
+        <FormInput 
+          key={index}
+          field={field}
+          value={dataObject[field]}
+          updater={(e: React.ChangeEvent<HTMLInputElement>) => {
+            updater(e.target.value, sectionName, field, id)
+          }} 
+          />
+      )
+    })
 
     setInputs(others => [...others, <div>{arrInputs}</div>])
   }
 
   const generateInputs = () => {
-    const fieldsArray = sectionData["fields"] 
-
-    if(Array.isArray(fieldsArray)) {
-      const creator = () => inputsFromArray(fieldsArray)
-      const addButton = <button type="button" onClick={creator}>Add new {sectionName}</button>
+    if(Array.isArray(sectionData["fields"])) {
+      const addButton = <button type="button" onClick={inputsFromArray}>Add new {sectionName.split(" ")[0]}</button>
       setInputs(others => [...others, addButton])
     } else {
-      inputsFromObject(sectionData)
+      inputsFromObject()
     }
 
     return () => {
-      setInputs(_ => [])
+      setInputs(() => [])
     }
   }
 
