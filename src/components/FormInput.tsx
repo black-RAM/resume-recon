@@ -1,6 +1,6 @@
 import React from "react"
 
-type formInputProps = {
+interface formInputProps {
   field: string, 
   value: string, 
   updater: React.ChangeEventHandler<HTMLInputElement>

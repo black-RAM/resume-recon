@@ -12,14 +12,15 @@ interface NestedData {
   }
 }
 
-type formSectionProps = {
+interface formSectionProps {
   sectionName: string,
   sectionData: Data | NestedData,
   updater: (newData: string, section: string, field: string, id?: string) => void,
 }
 
-const FormSection: React.FC<formSectionProps> = ({sectionName, sectionData, updater}) => {
+const FormSection: React.FC<formSectionProps> = (props) => {
   const [inputs, setInputs] = useState<React.JSX.Element[]>([])
+  const {sectionName, sectionData, updater} = props
 
   const inputsFromObject = () => {
     const entries = Object.entries(sectionData as Data)
@@ -73,7 +74,7 @@ const FormSection: React.FC<formSectionProps> = ({sectionName, sectionData, upda
     }
   }
 
-  useEffect(generateInputs, [sectionName, sectionData, updater])
+  useEffect(generateInputs, [props])
 
   return (
     <div>

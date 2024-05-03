@@ -1,6 +1,7 @@
 import React from "react"
 import { useImmer } from "use-immer"
 import FormSection from "./components/FormSection"
+import "./styles/App.css"
 
 // interfaces
 interface FormField {
