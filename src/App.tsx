@@ -1,27 +1,10 @@
 import React from "react"
 import { useImmer } from "use-immer"
 import FormSection from "./components/FormSection"
+import { DataForm } from "./interfaces/DataForm"
+import expandArray from "./utils/expandArray"
+import isFormArray from "./utils/isFormArray"
 import "./styles/App.css"
-
-// interfaces
-interface FormField {
-  [field: string]: string
-}
-
-interface FormArray{
-  "fields": string[],
-  "data": {
-    [id: string]: FormField
-  }
-}
-
-interface DataForm {
-  [section: string]: FormField | FormArray
-}
-
-function isFormArray(object: FormArray | FormField): object is FormArray {
-  return Array.isArray(object["fields"]) && typeof object.data == "object"
-}
 
 const emptyForm = {
   "personal details": {
@@ -46,19 +29,12 @@ const emptyForm = {
 const ResumeBuilder = () => {
   const [data, setData] = useImmer<DataForm>(emptyForm)
 
-  const expandDataFields = (fields: string[]) => {
-    return fields.reduce((obj: FormField, field) => {
-      obj[field] = field
-      return obj
-    }, {})
-  }
-
   const updateField = (newData: string, section: string, field: string, id = "") => {
     setData(draft => {
       const dataSection = draft[section]
       if(isFormArray(dataSection)) {
         let dataFields = dataSection["data"][id]
-        if(!dataFields) dataFields = expandDataFields(dataSection["fields"])
+        if(!dataFields) dataFields = expandArray(dataSection["fields"])
         dataFields[field] = newData
       } else {
         dataSection[field] = newData

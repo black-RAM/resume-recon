@@ -1,12 +1,7 @@
 import React from "react"
+import FormInputProps from "../interfaces/FormInputProps"
 
-interface formInputProps {
-  field: string, 
-  value: string, 
-  updater: React.ChangeEventHandler<HTMLInputElement>
-}
-
-const FormInput: React.FC<formInputProps> = ({field, value, updater}) => {
+const FormInput: React.FC<FormInputProps> = ({field, value, updater}) => {
   return (
     <div>
       <label>

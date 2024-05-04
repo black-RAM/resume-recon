@@ -1,29 +1,14 @@
-import React, { useEffect, useRef, useState, } from "react"
+import React, { useEffect, useState, } from "react"
+import { FormField, FormArray } from "../interfaces/DataForm"
+import FormSectionProps from "../interfaces/FormSectionProps"
 import FormInput from "./FormInput"
 
-interface Data {
-  [key: string]: string
-}
-
-interface NestedData {
-  "fields": string[], 
-  "data": {
-    [key: string]: Data
-  }
-}
-
-interface formSectionProps {
-  sectionName: string,
-  sectionData: Data | NestedData,
-  updater: (newData: string, section: string, field: string, id?: string) => void,
-}
-
-const FormSection: React.FC<formSectionProps> = (props) => {
+const FormSection: React.FC<FormSectionProps> = (props) => {
   const [inputs, setInputs] = useState<React.JSX.Element[]>([])
   const {sectionName, sectionData, updater} = props
 
   const inputsFromObject = () => {
-    const entries = Object.entries(sectionData as Data)
+    const entries = Object.entries(sectionData as FormField)
     const objInputs = entries.map(([key, value], index) => {
       return (
         <FormInput 
@@ -41,7 +26,7 @@ const FormSection: React.FC<formSectionProps> = (props) => {
 
   const inputsFromArray = () => {
     const id = crypto.randomUUID()
-    const section = sectionData as NestedData
+    const section = sectionData as FormArray
     const dataObject = section["data"][id] || {}
     const dataFields = section["fields"]
     
