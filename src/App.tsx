@@ -1,37 +1,22 @@
 import React from "react"
 import { useImmer } from "use-immer"
 import FormSection from "./components/FormSection"
+import Preview from "./components/Preview"
 import { DataForm } from "./interfaces/DataForm"
+import emptyForm from "./constants/emptyForm"
 import expandArray from "./utils/expandArray"
 import isFormArray from "./utils/isFormArray"
+// @ts-ignore
+import logo from "/logo.png"
 import "./styles/App.css"
 
-const emptyForm = {
-  "personal details": {
-    "first name": "",
-    "last name": "",
-    "job title": "",
-    "email address": "",
-    "phone number": "",
-    "country": "",
-    "city": ""
-  },
-  "education": {
-    "fields": ["School", "Degree", "Start Date", "End Date", "Location", "Description"],
-    "data": {}
-  },
-  "employment history": {
-    "fields": ["Job Title", "Employer", "Start Date", "End Date", "Location", "Description"],
-    "data": {}
-  }
-}
-
 const ResumeBuilder = () => {
-  const [data, setData] = useImmer<DataForm>(emptyForm)
+  const [data, setData] = useImmer(emptyForm)
 
   const updateField = (newData: string, section: string, field: string, id = "") => {
     setData(draft => {
-      const dataSection = draft[section]
+      const indexableDraft = draft as DataForm
+      const dataSection = indexableDraft[section]
       if(isFormArray(dataSection)) {
         let dataFields = dataSection["data"][id]
         if(!dataFields) dataFields = expandArray(dataSection["fields"])
@@ -51,10 +36,22 @@ const ResumeBuilder = () => {
   )
 
   return (
-    <form>
-      {formSections}
-      <button type="submit">Submit</button>
-    </form>
+    <div className="grid grid-cols-2">
+      <section>
+        <header>
+          <img src={logo} alt="folded suit with tie" />
+          <h1 className="text-lg">Resume Reconnaissance</h1>
+        </header>
+        <form>
+          {formSections}
+          <button type="submit">Submit</button>
+        </form>
+      </section>
+
+      <section>
+        <Preview data={data} />
+      </section>
+    </div>
   )
 }
 
