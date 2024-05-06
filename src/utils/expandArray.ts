@@ -1,6 +1,6 @@
 const expandArray = (arr: string[]) => {
   return arr.reduce((obj: {[key: string]: string}, field) => {
-    obj[field] = field
+    obj[field] = ""
     return obj
   }, {})
 }

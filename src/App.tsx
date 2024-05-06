@@ -15,12 +15,10 @@ const ResumeBuilder = () => {
 
   const updateField = (newData: string, section: string, field: string, id = "") => {
     setData(draft => {
-      const indexableDraft = draft as DataForm
-      const dataSection = indexableDraft[section]
+      const dataSection = (draft as DataForm)[section]
       if(isFormArray(dataSection)) {
-        let dataFields = dataSection["data"][id]
-        if(!dataFields) dataFields = expandArray(dataSection["fields"])
-        dataFields[field] = newData
+        if(!dataSection["data"][id]) dataSection["data"][id] = expandArray(dataSection["fields"])
+        dataSection["data"][id][field] = newData
       } else {
         dataSection[field] = newData
       }
