@@ -4,6 +4,7 @@ interface FormSectionProps {
   sectionName: string,
   sectionData: FormField | FormArray,
   updater: (newData: string, section: string, field: string, id?: string) => void,
+  creator: (section: string) => void
 }
 
 export default FormSectionProps

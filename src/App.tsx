@@ -13,15 +13,24 @@ import "./styles/App.css"
 const ResumeBuilder = () => {
   const [data, setData] = useImmer(emptyForm)
 
-  const updateField = (newData: string, section: string, field: string, id = "") => {
+  const updateField = (newData: string, section: string, field: string, id?: string) => {
     setData(draft => {
       const dataSection = (draft as DataForm)[section]
       if(isFormArray(dataSection)) {
-        if(!dataSection["data"][id]) dataSection["data"][id] = expandArray(dataSection["fields"])
+        if(!id) throw new Error("Provide id for indexing FormArray 'data' object literal.");
+        if(!dataSection["data"][id]) throw new Error(`First call createField for section ${section}.`)
         dataSection["data"][id][field] = newData
       } else {
         dataSection[field] = newData
       }
+    })
+  }
+
+  const createField = (section: string) => {
+    setData(draft => {
+      const dataSection = (draft as DataForm)[section]
+      if(!isFormArray(dataSection)) throw new Error("createField can only be called on FormArray sections.")
+      dataSection["data"][crypto.randomUUID()] = expandArray(dataSection["fields"])
     })
   }
 
@@ -30,6 +39,7 @@ const ResumeBuilder = () => {
       sectionName={section} 
       sectionData={data} 
       updater={updateField}
+      creator={createField}
       key={index} />
   )
 

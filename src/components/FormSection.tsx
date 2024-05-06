@@ -2,56 +2,36 @@ import React, { useEffect, useState, } from "react"
 import { FormField, FormArray } from "../interfaces/DataForm"
 import FormSectionProps from "../interfaces/FormSectionProps"
 import FormInput from "./FormInput"
+import isFormArray from "../utils/isFormArray"
+
+const inputsFromFormField = (name: string, data: FormField, listener: CallableFunction, id?: string) => {
+  return <div>{
+    Object.entries(data).map(([key, value], index) => 
+      <FormInput 
+        key={index}
+        field={key} 
+        value={value} 
+        updater={(e: React.ChangeEvent<HTMLInputElement>) => {
+          listener(e.target.value, name, key, id)
+        }} />  
+    )
+  }</div>
+}
 
 const FormSection: React.FC<FormSectionProps> = (props) => {
   const [inputs, setInputs] = useState<React.JSX.Element[]>([])
-  const {sectionName, sectionData, updater} = props
-
-  const inputsFromObject = () => {
-    const entries = Object.entries(sectionData as FormField)
-    const objInputs = entries.map(([key, value], index) => {
-      return (
-        <FormInput 
-          key={index}
-          field={key} 
-          value={value} 
-          updater={(e: React.ChangeEvent<HTMLInputElement>) => {
-            updater(e.target.value, sectionName, key)
-          }} />
-      )
-    })
-
-    setInputs(others => [...others, <div>{objInputs}</div>]) 
-  }
-
-  const inputsFromArray = () => {
-    const id = crypto.randomUUID()
-    const section = sectionData as FormArray
-    const dataObject = section["data"][id] || {}
-    const dataFields = section["fields"]
-    
-    const arrInputs = dataFields.map((field, index) => {
-      return (
-        <FormInput 
-          key={index}
-          field={field}
-          value={dataObject[field]}
-          updater={(e: React.ChangeEvent<HTMLInputElement>) => {
-            updater(e.target.value, sectionName, field, id)
-          }} 
-          />
-      )
-    })
-
-    setInputs(others => [...others, <div>{arrInputs}</div>])
-  }
+  const {sectionName, sectionData, updater, creator} = props
 
   const generateInputs = () => {
-    if(Array.isArray(sectionData["fields"])) {
-      const addButton = <button type="button" onClick={inputsFromArray}>Add new {sectionName.split(" ")[0]}</button>
-      setInputs(others => [...others, addButton])
+    if(isFormArray(sectionData)) {
+      const formArrayInputs = Object.entries(sectionData["data"]).map(([id, formField]) => {
+        return inputsFromFormField(sectionName, formField, updater, id)
+      })
+      const addButton = <button type="button" onClick={() => creator(sectionName)}>Add new {sectionName}</button>
+      setInputs(others => [...others, ...formArrayInputs, addButton])
     } else {
-      inputsFromObject()
+      const formFieldInputs = inputsFromFormField(sectionName, sectionData, updater)
+      setInputs(others => [...others, formFieldInputs])
     }
 
     return () => {
