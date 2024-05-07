@@ -1,10 +1,10 @@
 import { FormArray, FormField } from "./DataForm"
+import Action from "./DataFormAction"
 
 interface FormSectionProps {
   sectionName: string,
   sectionData: FormField | FormArray,
-  updater: (newData: string, section: string, field: string, id?: string) => void,
-  creator: (section: string) => void
+  dispatcher: React.Dispatch<Action>
 }
 
 export default FormSectionProps

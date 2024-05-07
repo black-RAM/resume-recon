@@ -1,45 +1,21 @@
 import React from "react"
-import { useImmer } from "use-immer"
+import { useImmerReducer } from "use-immer"
+import reducer from "./reducers/DataFormReducer"
 import FormSection from "./components/FormSection"
 import Preview from "./components/Preview"
-import { DataForm } from "./interfaces/DataForm"
 import emptyForm from "./constants/emptyForm"
-import expandArray from "./utils/expandArray"
-import isFormArray from "./utils/isFormArray"
 // @ts-ignore
 import logo from "/logo.png"
 import "./styles/App.css"
 
 const ResumeBuilder = () => {
-  const [data, setData] = useImmer(emptyForm)
+  const [form, dispatch] = useImmerReducer(reducer, emptyForm)
 
-  const updateField = (newData: string, section: string, field: string, id?: string) => {
-    setData(draft => {
-      const dataSection = (draft as DataForm)[section]
-      if(isFormArray(dataSection)) {
-        if(!id) throw new Error("Provide id for indexing FormArray 'data' object literal.");
-        if(!dataSection["data"][id]) throw new Error(`First call createField for section ${section}.`)
-        dataSection["data"][id][field] = newData
-      } else {
-        dataSection[field] = newData
-      }
-    })
-  }
-
-  const createField = (section: string) => {
-    setData(draft => {
-      const dataSection = (draft as DataForm)[section]
-      if(!isFormArray(dataSection)) throw new Error("createField can only be called on FormArray sections.")
-      dataSection["data"][crypto.randomUUID()] = expandArray(dataSection["fields"])
-    })
-  }
-
-  const formSections = Object.entries(data).map(([section, data], index) => 
+  const formSections = Object.entries(form).map(([section, data], index) => 
     <FormSection 
       sectionName={section} 
       sectionData={data} 
-      updater={updateField}
-      creator={createField}
+      dispatcher={dispatch}
       key={index} />
   )
 
@@ -57,7 +33,7 @@ const ResumeBuilder = () => {
       </section>
 
       <section>
-        <Preview data={data} />
+        <Preview data={form} />
       </section>
     </div>
   )

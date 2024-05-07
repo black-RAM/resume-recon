@@ -1,42 +1,32 @@
 import React, { useEffect, useState, } from "react"
-import { FormField, FormArray } from "../interfaces/DataForm"
 import FormSectionProps from "../interfaces/FormSectionProps"
-import FormInput from "./FormInput"
 import isFormArray from "../utils/isFormArray"
-
-const inputsFromFormField = (name: string, data: FormField, listener: CallableFunction, id?: string) => {
-  return <div>{
-    Object.entries(data).map(([key, value], index) => 
-      <FormInput 
-        key={index}
-        field={key} 
-        value={value} 
-        updater={(e: React.ChangeEvent<HTMLInputElement>) => {
-          listener(e.target.value, name, key, id)
-        }} />  
-    )
-  }</div>
-}
+import uuid from "../interfaces/uuid"
+import FormGroup from "./FormGroup"
 
 const FormSection: React.FC<FormSectionProps> = (props) => {
   const [inputs, setInputs] = useState<React.JSX.Element[]>([])
-  const {sectionName, sectionData, updater, creator} = props
+  const {sectionName, sectionData, dispatcher} = props
 
   const generateInputs = () => {
+    const newInputs: React.JSX.Element[] = []
+
     if(isFormArray(sectionData)) {
-      const formArrayInputs = Object.entries(sectionData["data"]).map(([id, formField]) => {
-        return inputsFromFormField(sectionName, formField, updater, id)
-      })
-      const addButton = <button type="button" onClick={() => creator(sectionName)}>Add new {sectionName}</button>
-      setInputs(others => [...others, ...formArrayInputs, addButton])
+      newInputs.push(
+        ...Object.entries(sectionData["data"]).map(([id, attribute], index) => 
+          <FormGroup section={sectionName} fields={attribute} id={id as uuid} dispatcher={dispatcher} key={index}  />
+        ), 
+        <button type="button" onClick={() => dispatcher({type: "CREATE", section: sectionName})}>
+          Add new {sectionName}
+        </button>
+      )
     } else {
-      const formFieldInputs = inputsFromFormField(sectionName, sectionData, updater)
-      setInputs(others => [...others, formFieldInputs])
+      newInputs.push(<FormGroup section={sectionName} fields={sectionData} dispatcher={dispatcher}/>)
     }
 
-    return () => {
-      setInputs(() => [])
-    }
+    setInputs(others => [...others, ...newInputs])
+
+    return () => setInputs(() => [])
   }
 
   useEffect(generateInputs, [props])
