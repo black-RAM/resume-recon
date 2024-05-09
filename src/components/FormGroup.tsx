@@ -3,7 +3,7 @@ import FormInput from "./FormInput"
 import FormGroupProps from "../interfaces/FormGroupProps"
 
 const FormGroup: React.FC<FormGroupProps> = ({section, fields, dispatcher, id}) => {
-  return <div>{
+  return <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 mb-4">{
     Object.entries(fields).map(([field, value], index) => 
       <FormInput 
         key={index}

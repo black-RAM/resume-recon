@@ -6,7 +6,8 @@ const emptyForm = {
     "email address": "",
     "phone number": "",
     "country": "",
-    "city": ""
+    "city": "",
+    "professional summary": "",
   },
   "education": {
     "fields": ["School", "Degree", "Start Date", "End Date", "Location", "Description"],

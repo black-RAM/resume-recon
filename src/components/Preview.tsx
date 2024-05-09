@@ -11,10 +11,10 @@ const Preview: React.FC<{data: DataForm}> = ({data}) => {
   }
 
   return (
-    <>{
+    <div className="bg-white w-1/2 h-full">{
       Object.entries(data).map(([sectionName, sectionData], index) => {
         return <article className={hyphenate(sectionName)} key={index}>
-          <h2 className="title">{sectionName}</h2>
+          <h3 className="title">{sectionName}</h3>
           {isFormArray(sectionData) ? 
             Object.entries(sectionData["data"]).map(([_, fields], index) => {
               return <div key={index}>{createParagraphs(fields)}</div>
@@ -22,7 +22,7 @@ const Preview: React.FC<{data: DataForm}> = ({data}) => {
             createParagraphs(sectionData)}
         </article>
       })
-    }</>
+    }</div>
   )
 }
 
