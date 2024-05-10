@@ -1,5 +1,5 @@
 import React from "react"
-import { useImmerReducer } from "use-immer"
+import useSuperReducer from "./hooks/useSuperReducer"
 import reducer from "./reducers/DataFormReducer"
 import FormSection from "./components/FormSection"
 import Preview from "./components/Preview"
@@ -9,7 +9,7 @@ import logo from "/logo.png"
 import "./styles/App.css"
 
 const ResumeBuilder = () => {
-  const [form, dispatch] = useImmerReducer(reducer, emptyForm)
+  const [form, dispatch] = useSuperReducer("data", reducer, emptyForm)
 
   const formSections = Object.entries(form).map(([section, data], index) => 
     <FormSection 
