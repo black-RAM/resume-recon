@@ -22,7 +22,7 @@ const ResumeBuilder = () => {
   return (
     <div className="grid grid-cols-2 h-dvh">
       <section className="px-8 max-h-dvh overflow-scroll">
-        <header className="flex justify-center my-6">
+        <header className="flex justify-center items-center my-6">
           <img src={logo} alt="folded suit with tie" className="h-12" />
           <h1 className="text-2xl sm:text-4xl">Resume Reconnaissance</h1>
         </header>
@@ -36,7 +36,7 @@ const ResumeBuilder = () => {
         </form>
       </section>
 
-      <section className="bg-hunt-navy flex flex-col items-center pb-8">
+      <section className="bg-hunt-navy flex flex-col items-center justify-center pb-8">
         <h2 className="text-center text-hunt-grey text-xl my-4">Preview</h2>
         <Preview data={form} />
       </section>
