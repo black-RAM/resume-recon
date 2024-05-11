@@ -10,11 +10,11 @@ const emptyForm = {
     "professional summary": "",
   },
   "education": {
-    "fields": ["School", "Degree", "Start Date", "End Date", "Location", "Description"],
+    "fields": ["school", "degree", "start date", "end date", "location", "description"],
     "data": {}
   },
   "employment history": {
-    "fields": ["Job Title", "Employer", "Start Date", "End Date", "Location", "Description"],
+    "fields": ["job title", "employer", "start date", "end date", "location", "description"],
     "data": {}
   }
 }

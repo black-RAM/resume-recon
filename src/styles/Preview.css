@@ -1,0 +1,47 @@
+#preview {
+  @apply bg-white p-[1em];
+  .title {
+    @apply text-[1.5em] capitalize underline mt-[0.25em] border-t;
+  }
+
+  #personal-details {
+    @apply grid gap-x-[1em];
+    > * {
+      @apply col-start-1 text-[0.75em];
+    }
+    .title {
+      @apply hidden;
+    }
+    .first-name,
+    .last-name {
+      @apply text-[2em] leading-tight col-span-2;
+    }
+    .job-title {
+      @apply pb-[0.5em] mb-[0.5em] border-b col-span-2;
+    }
+    .professional-summary {
+      @apply col-start-2 row-start-4 row-span-4;
+    }
+  }
+
+  .listed {
+    @apply grid grid-rows-3 grid-cols-3 text-[0.5em] my-[0.5em] p-[0.5em] border-dashed border-b;
+    .degree {
+      @apply order-first;
+    }
+    .location {
+      @apply col-start-3 row-start-1 row-span-2 self-center;
+    }
+    .description {
+      @apply col-span-3;
+    }
+  }
+
+  .title,
+  .listed,
+  .first-name,
+  .last-name,
+  .job-title {
+    @apply text-center;
+  }
+}

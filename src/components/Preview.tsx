@@ -3,10 +3,11 @@ import { DataForm, FormField } from "../interfaces/DataForm"
 import isFormArray from "../utils/isFormArray"
 import hyphenate from "../utils/hyphenate"
 import useViewport from "../hooks/useViewport"
+import "../styles/Preview.css"
 
-const Paragraphs: React.FC<{obj: FormField}> = ({obj}) => {
+const Content: React.FC<{obj: FormField}> = ({obj}) => {
   return Object.entries(obj).map(([key, value], index) => 
-    <p className={hyphenate(key)} key={index}>{value}</p>
+    <p key={index} className={hyphenate(key)}>{value}</p>
   )
 }
 
@@ -21,17 +22,17 @@ const Preview: React.FC<{data: DataForm}> = ({data}) => {
   const height = Math.min(portrait, maxHeight)
 
   return (
-    <div className="bg-white" style={{width: width, height: height}}>{
+    <div id="preview" style={{width: width, height: height, fontSize: height / 30}}>{
       Object.entries(data).map(([sectionName, sectionData], index) => {
-        return <article className={hyphenate(sectionName)} key={index}>
+        return <article id={hyphenate(sectionName)} className="article" key={index}>
           <h3 className="title">{sectionName}</h3>
           {isFormArray(sectionData) ? 
             Object.entries(sectionData["data"]).map(([_, fields], index) => {
-              return <div key={index}>
-                <Paragraphs obj={fields} />
+              return <div key={index} className="listed">
+                <Content obj={fields} />
               </div>
             }) :
-            <Paragraphs obj={sectionData} />}
+            <Content obj={sectionData} />}
         </article>
       })
     }</div>
