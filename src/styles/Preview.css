@@ -1,7 +1,7 @@
 #preview {
-  @apply bg-white p-[1em];
+  @apply bg-white p-[1em] h-full;
   .title {
-    @apply text-[1.5em] capitalize underline mt-[0.25em] border-t;
+    @apply text-[1.25em] capitalize underline mt-[0.25em] border-t;
   }
 
   #personal-details {
