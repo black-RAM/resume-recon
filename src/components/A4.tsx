@@ -17,7 +17,7 @@ const A4: React.FC<Props> = ({maxWidth, maxHeight, overflowAlert, children}) => 
   useEffect(() => {
     const page = pageRef.current
     if(page) overflowAlert(page.clientHeight < page.scrollHeight)
-  }, [])
+  }, [pageRef.current])
 
   return (
     <div ref={pageRef} style={{width: width, height: height, fontSize: width / 20}} className="overflow-hidden">

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import A4 from "./A4"
 import { DataForm, FormArray, FormField } from "../interfaces/DataForm"
 import useViewport from "../hooks/useViewport"
@@ -9,6 +9,7 @@ import "../styles/Preview.css"
 import chevronLeft from "../assets/chevronLeft.svg"
 // @ts-ignore
 import chevronRight from "../assets/chevronRight.svg"
+import { useImmer } from "use-immer"
 
 const Paragraphs: React.FC<{obj: FormField}> = ({obj}) => {
   return Object.entries(obj).map(([key, value], index) => 
@@ -30,22 +31,40 @@ const Content: React.FC<{sketch: FormField | FormArray}> = ({sketch}) => {
 
 const Preview: React.FC<{data: DataForm}> = ({data}) => {
   const [isOverflowing, setIsOverflowing] = useState(false)
+  const [pages, setPages] = useImmer([data])
   const [pageNumber, flipPage] = useState(0)
   const {vw, vh} = useViewport()
 
-  const articles = Object.entries(data).map(([sectionName, sectionData], index) => 
+  const updatePage = () => setPages([data])
+  useEffect(updatePage, [data])
+  
+  const clearOverflow = () => {
+    if(isOverflowing) {
+      setPages(pages => {
+        const page = pages[pageNumber]
+        const last = Object.entries(page).pop()
+        if(last) {
+          const [name, data] = last
+          delete page[name]
+          const newPage: DataForm = {}
+          newPage[name] = data
+          pages.push(newPage)
+        }
+      })
+    }
+  }
+
+  useEffect(clearOverflow, [data, isOverflowing])
+  console.log(isOverflowing)
+
+  const articles = Object.entries(pages[pageNumber]).map(([sectionName, sectionData], index) => 
     <article id={hyphenate(sectionName)} className="article" key={index}>
       <h3 className="title">{sectionName}</h3>
       <Content sketch={sectionData} />
     </article>
   )
 
-  const pages = [
-    [articles[0], articles[1]],
-    [articles[2]]
-  ]
-
-  const nextPage = () => flipPage(current => Math.min(current + 1, articles.length))
+  const nextPage = () => flipPage(current => Math.min(current + 1, pages.length - 1))
   const lastPage = () => flipPage(current => Math.max(current - 1, 0))
 
   return <>
@@ -55,7 +74,7 @@ const Preview: React.FC<{data: DataForm}> = ({data}) => {
       </button>
       <A4 maxHeight={100 * vh - 92} maxWidth={45 * vw} overflowAlert={setIsOverflowing}>
         <div id="preview">
-          {pages[pageNumber]}
+          {articles}
         </div>
       </A4>
       <button type="button" title="next page" onClick={nextPage}>
