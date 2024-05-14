@@ -30,32 +30,57 @@ const Content: React.FC<{sketch: FormField | FormArray}> = ({sketch}) => {
 }
 
 const Preview: React.FC<{data: DataForm}> = ({data}) => {
-  const [isOverflowing, setIsOverflowing] = useState(false)
+  const [overflow, setOverflow] = useState(0)
   const [pages, setPages] = useImmer([data])
   const [pageNumber, flipPage] = useState(0)
   const {vw, vh} = useViewport()
-
-  const updatePage = () => setPages([data])
-  useEffect(updatePage, [data])
   
   const clearOverflow = () => {
-    if(isOverflowing) {
-      setPages(pages => {
-        const page = pages[pageNumber]
+    if(overflow <= 0) return
+
+    setPages(pages => {
+      let overflownPixels = overflow
+      const minimumOverflownPixels = 150
+      const page = pages[pageNumber]
+      const newPage: DataForm = {}
+
+      while(overflownPixels > minimumOverflownPixels) {
         const last = Object.entries(page).pop()
-        if(last) {
-          const [name, data] = last
-          delete page[name]
-          const newPage: DataForm = {}
-          newPage[name] = data
-          pages.push(newPage)
+        if(!last) break
+
+        const [lastSectionName, lastSectionData] = last 
+
+        if(isFormArray(lastSectionData)) {
+          const dataObj: FormArray = {"data": {}, "fields": lastSectionData["fields"]}
+
+          while(overflownPixels > minimumOverflownPixels) {
+            const lastEntry = Object.entries(lastSectionData["data"]).pop()
+            if(!lastEntry) {
+              delete page[lastSectionName]
+              break
+            }
+
+            const [lastId, lastFields] = lastEntry
+            delete lastSectionData["data"][lastId]
+
+            if(dataObj) {
+              dataObj["data"][lastId] = lastFields
+              newPage[lastSectionName] = dataObj
+              overflownPixels -= 50
+            }
+          }
+        } else {
+          delete page[lastSectionName]
+          newPage[lastSectionName] = lastSectionData
+          overflownPixels -= 50
         }
-      })
-    }
+      }
+
+      pages.push(newPage)
+    })
   }
 
-  useEffect(clearOverflow, [data, isOverflowing])
-  console.log(isOverflowing)
+  useEffect(clearOverflow, [overflow])
 
   const articles = Object.entries(pages[pageNumber]).map(([sectionName, sectionData], index) => 
     <article id={hyphenate(sectionName)} className="article" key={index}>
@@ -72,7 +97,7 @@ const Preview: React.FC<{data: DataForm}> = ({data}) => {
       <button type="button" title="previous page" onClick={lastPage}>
         <img src={chevronLeft} alt="left arrow" />
       </button>
-      <A4 maxHeight={100 * vh - 92} maxWidth={45 * vw} overflowAlert={setIsOverflowing}>
+      <A4 maxHeight={100 * vh - 92} maxWidth={45 * vw} overflowTracker={setOverflow}>
         <div id="preview">
           {articles}
         </div>
