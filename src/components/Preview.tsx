@@ -37,15 +37,20 @@ const Preview: React.FC<{data: DataForm}> = ({data}) => {
 
   const updatePages = () => {
     setPages(pages => {
-      for (const [sectionName, sectionData] of Object.entries(data)) {
-        for(const page of pages) {
+      for(const page of pages) {
+        for (const [sectionName, sectionData] of Object.entries(data)) {
           if(Object.keys(page).includes(sectionName)) {
             if(isFormArray(sectionData)) {
-              for(const [id, fields] of Object.entries(sectionData["data"])) {
-                const pageData = (page[sectionName] as FormArray)["data"]
-                if(Object.keys(pageData).includes(id)) {
-                  (page[sectionName] as FormArray)["data"][id] = fields
-                }
+              const identifiedFields = sectionData["data"]
+              const pageData = (page[sectionName] as FormArray)["data"]
+              const pageIds = Object.keys(pageData)
+              
+              for(const [id, fields] of Object.entries(identifiedFields)) {
+                if(pageIds.includes(id)) pageData[id] = fields
+              }
+              
+              for(const deletedId of pageIds.filter(id => !Object.keys(identifiedFields).includes(id))) {
+                delete pageData[deletedId]
               }
             } else {
               page[sectionName] = sectionData
@@ -103,7 +108,6 @@ const Preview: React.FC<{data: DataForm}> = ({data}) => {
     })
   }
 
-  console.log(overflow)
   useEffect(clearOverflow, [overflow])
 
   const articles = Object.entries(pages[pageNumber]).map(([sectionName, sectionData], index) => 

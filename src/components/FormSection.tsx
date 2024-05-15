@@ -5,6 +5,8 @@ import uuid from "../interfaces/uuid"
 import isFormArray from "../utils/isFormArray"
 // @ts-ignore
 import libraryAddIcon from "../assets/libraryAddIcon.svg"
+// @ts-ignore
+import deleteIcon from "../assets/deleteIcon.svg"
 
 const FormSection: React.FC<FormSectionProps> = (props) => {
   const [inputs, setInputs] = useState<React.JSX.Element[]>([])
@@ -16,7 +18,12 @@ const FormSection: React.FC<FormSectionProps> = (props) => {
     if(isFormArray(sectionData)) {
       const groups = Object.entries(sectionData["data"]).map(([id, attribute], index) => 
         <div className="p-4 my-4 shadow">
-          <h4 className="text-lg font-bold">{Object.entries(attribute)[0][1]}</h4>
+          <div className="flex justify-between">
+            <h4 className="text-lg font-bold">{Object.entries(attribute)[0][1]}</h4>
+            <button type="button" onClick={() => dispatcher({type: "DELETE", section: sectionName, id: id as uuid})}>
+              <img src={deleteIcon} alt="delete" />
+            </button>
+          </div>
           <FormGroup section={sectionName} fields={attribute} id={id as uuid} dispatcher={dispatcher} key={index}  />
         </div>
       )
