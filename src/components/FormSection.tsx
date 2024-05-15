@@ -1,8 +1,8 @@
 import React, { useEffect, useState, } from "react"
-import FormGroup from "./FormGroup"
-import FormSectionProps from "../interfaces/FormSectionProps"
-import uuid from "../interfaces/uuid"
-import isFormArray from "../utils/isFormArray"
+import FormGroup from "./FormGroup.tsx"
+import FormSectionProps from "../interfaces/FormSectionProps.ts"
+import uuid from "../interfaces/uuid.ts"
+import isFormArray from "../utils/isFormArray.ts"
 // @ts-ignore
 import libraryAddIcon from "../assets/libraryAddIcon.svg"
 // @ts-ignore

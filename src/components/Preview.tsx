@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react"
 import A4 from "./A4"
-import { DataForm, FormArray, FormField } from "../interfaces/DataForm"
-import useViewport from "../hooks/useViewport"
-import isFormArray from "../utils/isFormArray"
-import hyphenate from "../utils/hyphenate"
+import { DataForm, FormArray, FormField } from "../interfaces/DataForm.ts"
+import useViewport from "../hooks/useViewport.ts"
+import isFormArray from "../utils/isFormArray.ts"
+import hyphenate from "../utils/hyphenate.ts"
 import "../styles/Preview.css"
 // @ts-ignore
 import chevronLeft from "../assets/chevronLeft.svg"

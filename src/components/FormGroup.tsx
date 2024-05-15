@@ -1,6 +1,6 @@
 import React from "react"
-import FormInput from "./FormInput"
-import FormGroupProps from "../interfaces/FormGroupProps"
+import FormInput from "./FormInput.tsx"
+import FormGroupProps from "../interfaces/FormGroupProps.ts"
 
 const FormGroup: React.FC<FormGroupProps> = ({section, fields, dispatcher, id}) => {
   return <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 mb-4">{

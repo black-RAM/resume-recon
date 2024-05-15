@@ -1,5 +1,5 @@
 import React from "react"
-import FormInputProps from "../interfaces/FormInputProps"
+import FormInputProps from "../interfaces/FormInputProps.ts"
 
 const FormInput: React.FC<FormInputProps> = ({field, value, updater}) => {
   return (

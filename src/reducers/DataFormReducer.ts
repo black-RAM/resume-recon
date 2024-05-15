@@ -1,8 +1,8 @@
 import { ImmerReducer } from "use-immer"
-import { DataForm } from "../interfaces/DataForm"
-import isFormArray from "../utils/isFormArray"
-import expandArray from "../utils/expandArray"
-import Action from "../interfaces/DataFormAction"
+import { DataForm } from "../interfaces/DataForm.ts"
+import isFormArray from "../utils/isFormArray.ts"
+import expandArray from "../utils/expandArray.ts"
+import Action from "../interfaces/DataFormAction.ts"
 
 
 const reducer: ImmerReducer<DataForm, Action> = (draft, action) => {

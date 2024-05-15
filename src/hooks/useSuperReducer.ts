@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { ImmerReducer, useImmerReducer } from "use-immer"
-import { DataForm } from "../interfaces/DataForm"
-import Action from "../interfaces/DataFormAction"
+import { DataForm } from "../interfaces/DataForm.ts"
+import Action from "../interfaces/DataFormAction.ts"
 
 /**
  * A custom hook that combines useImmerReducer with localStorage for state management.
