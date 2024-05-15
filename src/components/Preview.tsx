@@ -37,6 +37,7 @@ const Preview: React.FC<{data: DataForm}> = ({data}) => {
 
   const updatePages = () => {
     setPages(pages => {
+      const displayedIds: string[] = []
       for(const page of pages) {
         for (const [sectionName, sectionData] of Object.entries(data)) {
           if(Object.keys(page).includes(sectionName)) {
@@ -46,7 +47,8 @@ const Preview: React.FC<{data: DataForm}> = ({data}) => {
               const pageIds = Object.keys(pageData)
               
               for(const [id, fields] of Object.entries(identifiedFields)) {
-                if(pageIds.includes(id)) pageData[id] = fields
+                if(!displayedIds.includes(id)) pageData[id] = fields
+                displayedIds.push(id)
               }
               
               for(const deletedId of pageIds.filter(id => !Object.keys(identifiedFields).includes(id))) {
