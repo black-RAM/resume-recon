@@ -28,11 +28,6 @@ const ResumeBuilder = () => {
         </header>
         <form>
           {formSections}
-          <button 
-            type="submit" 
-            className="text-xl p-2 w-full text-white bg-hunt-blue bg-opacity-75 hover:bg-opacity-100">
-              Submit
-            </button>
         </form>
       </section>
 
