@@ -30,17 +30,40 @@ const Content: React.FC<{sketch: FormField | FormArray}> = ({sketch}) => {
 }
 
 const Preview: React.FC<{data: DataForm}> = ({data}) => {
-  const [overflow, setOverflow] = useState(0)
   const [pages, setPages] = useImmer([data])
   const [pageNumber, flipPage] = useState(0)
+  const [overflow, setOverflow] = useState(0)
   const {vw, vh} = useViewport()
+
+  const updatePages = () => {
+    setPages(pages => {
+      for (const [sectionName, sectionData] of Object.entries(data)) {
+        for(const page of pages) {
+          if(Object.keys(page).includes(sectionName)) {
+            if(isFormArray(sectionData)) {
+              for(const [id, fields] of Object.entries(sectionData["data"])) {
+                const pageData = (page[sectionName] as FormArray)["data"]
+                if(Object.keys(pageData).includes(id)) {
+                  (page[sectionName] as FormArray)["data"][id] = fields
+                }
+              }
+            } else {
+              page[sectionName] = sectionData
+            }
+          }
+        }
+      }
+    })
+  }
+
+  useEffect(updatePages, [data])
   
   const clearOverflow = () => {
     if(overflow <= 0) return
 
     setPages(pages => {
       let overflownPixels = overflow
-      const minimumOverflownPixels = 150
+      const minimumOverflownPixels = 0
       const page = pages[pageNumber]
       const newPage: DataForm = {}
 
@@ -80,6 +103,7 @@ const Preview: React.FC<{data: DataForm}> = ({data}) => {
     })
   }
 
+  console.log(overflow)
   useEffect(clearOverflow, [overflow])
 
   const articles = Object.entries(pages[pageNumber]).map(([sectionName, sectionData], index) => 
